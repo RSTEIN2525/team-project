@@ -40,12 +40,41 @@ SELECT DISTINCT playlist_genre
 FROM staging
 ORDER BY playlist_genre;
 
+-- Descriptions for each genre.
+UPDATE Genres SET description = 'High-energy electronic dance music driven by synths, programmed beats, and drops built for clubs and festivals.' WHERE name = 'edm';
+UPDATE Genres SET description = 'Spanish-language music spanning reggaeton, Latin pop, and tropical rhythms with strong dance-oriented grooves.' WHERE name = 'latin';
+UPDATE Genres SET description = 'Mainstream popular music defined by catchy hooks, polished production, and broad commercial appeal.' WHERE name = 'pop';
+UPDATE Genres SET description = 'Rhythm and blues — vocal-forward, soulful music built around smooth grooves and melodic phrasing.' WHERE name = 'r&b';
+UPDATE Genres SET description = 'Hip-hop characterized by rhythmic, spoken-word vocals layered over heavy beats and sampled or programmed instrumentals.' WHERE name = 'rap';
+UPDATE Genres SET description = 'Guitar-driven music with prominent drums and strong vocals, ranging from classic rock anthems to modern alternative.' WHERE name = 'rock';
 
--- Artists: one row per distinct track_artist. country / founded / is_group stay NULL.
+
+-- Artists: one row per distinct track_artist. country / founded / is_group filled below.
 INSERT INTO Artists (name)
 SELECT DISTINCT track_artist
 FROM staging
 ORDER BY track_artist;
+
+
+-- Backfill country_of_origin / founded / is_group from hand-curated artist_data.csv.
+DROP TABLE IF EXISTS artist_staging;
+CREATE TEMP TABLE artist_staging (
+    name               TEXT,
+    country_of_origin  TEXT,
+    founded            INTEGER,
+    is_group           INTEGER
+);
+
+COPY artist_staging FROM '/Users/ryanstein/Documents/INST123/team-project/data/artist_data.csv' WITH (FORMAT csv, HEADER true);
+
+UPDATE Artists a
+SET country_of_origin = s.country_of_origin,
+    founded           = s.founded,
+    is_group          = s.is_group
+FROM artist_staging s
+WHERE a.name = s.name;
+
+DROP TABLE artist_staging;
 
 
 -- Albums: one row per distinct track_album_id, joined to Artists by name.
