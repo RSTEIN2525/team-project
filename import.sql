@@ -31,7 +31,7 @@ CREATE TEMP TABLE staging (
 );
 
 -- Bulk Load (Read all 500 rows and pop into table)
-COPY staging FROM '/Users/ryanstein/Documents/INST123/team-project/data/spotify_top_500.csv' WITH (FORMAT csv, HEADER true);
+COPY staging FROM '/Users/siyua/INST123/team-project/data/spotify_top_500.csv' WITH (FORMAT csv, HEADER true);
 
 
 -- Genres: one row per distinct playlist_genre. SERIAL assigns IDs.
@@ -65,7 +65,7 @@ CREATE TEMP TABLE artist_staging (
     is_group           INTEGER
 );
 
-COPY artist_staging FROM '/Users/ryanstein/Documents/INST123/team-project/data/artist_data.csv' WITH (FORMAT csv, HEADER true);
+COPY artist_staging FROM '/Users/siyua/INST123/team-project/data/artist_data.csv' WITH (FORMAT csv, HEADER true);
 
 UPDATE Artists a
 SET country_of_origin = s.country_of_origin,
