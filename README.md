@@ -89,3 +89,22 @@ After running `tables.sql` and `import.sql`, these are the columns left to fill 
   - `purchase_price`: USD, e.g. `24.99`
   - `personal_rating`: integer 1–5
 
+---
+
+## Backups
+
+`backup.sql` at the repo root is a full schema + data dump of the local `spotify` db, made with `pg_dump`. Drop it on any machine with Postgres and you get the whole project db back.
+
+**Regenerate** (after schema or data changes):
+```bash
+pg_dump -d spotify --no-owner --no-privileges > backup.sql
+```
+
+**Restore** into a new db:
+```bash
+createdb spotify_restored
+psql -d spotify_restored -f backup.sql
+```
+
+Expected row counts: tracks=500, albums=430, artists=256, genres=6, collection=25.
+
